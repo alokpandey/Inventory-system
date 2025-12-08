@@ -1,0 +1,1750 @@
+{
+	"info": {
+		"_postman_id": "inventree-api-collection",
+		"name": "InvenTree API v421 - Complete Collection",
+		"description": "Complete Postman collection for InvenTree API v421 with all 421 endpoints organized by category",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "Token {{auth_token}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "inventree",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get Token (Basic Auth)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('auth_token', jsonData.token);",
+									"    console.log('Token saved: ' + jsonData.token);",
+									"    console.log('Token expiry: ' + jsonData.expiry);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/token/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "token", ""]
+						},
+						"description": "Get authentication token using Basic Auth (username/password). Token is automatically saved to collection variable and expires in 1 year."
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/me/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "me", ""]
+						},
+						"description": "Get current authenticated user information"
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "logout", ""]
+						},
+						"description": "Logout and invalidate token"
+					}
+				}
+			],
+			"description": "Authentication endpoints for login, logout, and token management"
+		},
+		{
+			"name": "Server Info",
+			"item": [
+				{
+					"name": "Get Server Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/",
+							"host": ["{{base_url}}"],
+							"path": ["api", ""]
+						},
+						"description": "Get InvenTree server information including version, API version, and instance details"
+					}
+				},
+				{
+					"name": "Get API Schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/schema/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "schema", ""]
+						},
+						"description": "Get complete OpenAPI schema for the InvenTree API"
+					}
+				}
+			],
+			"description": "Server information and API schema endpoints"
+		},
+		{
+			"name": "Parts",
+			"item": [
+				{
+					"name": "List Parts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/part/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "active",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "assembly",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "component",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all parts with optional filtering"
+					}
+				},
+				{
+					"name": "Create Part",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Part\",\n    \"description\": \"Part description\",\n    \"category\": null,\n    \"IPN\": \"PART-001\",\n    \"active\": true,\n    \"component\": true,\n    \"purchaseable\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/part/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", ""]
+						},
+						"description": "Create a new part"
+					}
+				},
+				{
+					"name": "Get Part Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/part/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get detailed information about a specific part"
+					}
+				},
+				{
+					"name": "Update Part",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Updated description\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/part/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Update part information"
+					}
+				},
+				{
+					"name": "Delete Part",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/part/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Delete a part"
+					}
+				}
+			],
+			"description": "Part management endpoints"
+		},
+		{
+			"name": "Part Categories",
+			"item": [
+				{
+					"name": "List Part Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/part/category/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", "category", ""]
+						},
+						"description": "List all part categories"
+					}
+				},
+				{
+					"name": "Create Part Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Electronics\",\n    \"description\": \"Electronic components\",\n    \"parent\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/part/category/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", "category", ""]
+						},
+						"description": "Create a new part category"
+					}
+				},
+				{
+					"name": "Get Category Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/part/category/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "part", "category", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get part category details"
+					}
+				}
+			],
+			"description": "Part category management"
+		},
+		{
+			"name": "Stock",
+			"item": [
+				{
+					"name": "List Stock Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stock/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "part",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "in_stock",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all stock items"
+					}
+				},
+				{
+					"name": "Create Stock Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"part\": 1,\n    \"quantity\": 100,\n    \"location\": 1,\n    \"status\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", ""]
+						},
+						"description": "Create a new stock item"
+					}
+				},
+				{
+					"name": "Get Stock Item Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stock/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get stock item details"
+					}
+				},
+				{
+					"name": "Transfer Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"pk\": 1,\n            \"quantity\": 10\n        }\n    ],\n    \"location\": 2,\n    \"notes\": \"Transfer to new location\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/stock/transfer/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", "transfer", ""]
+						},
+						"description": "Transfer stock items to a new location"
+					}
+				},
+				{
+					"name": "Adjust Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"pk\": 1,\n            \"quantity\": 5\n        }\n    ],\n    \"notes\": \"Stock adjustment\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/stock/count/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", "count", ""]
+						},
+						"description": "Adjust stock quantities"
+					}
+				}
+			],
+			"description": "Stock item management and operations"
+		},
+		{
+			"name": "Stock Locations",
+			"item": [
+				{
+					"name": "List Stock Locations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stock/location/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", "location", ""]
+						},
+						"description": "List all stock locations"
+					}
+				},
+				{
+					"name": "Create Stock Location",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Warehouse A\",\n    \"description\": \"Main warehouse\",\n    \"parent\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/stock/location/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", "location", ""]
+						},
+						"description": "Create a new stock location"
+					}
+				},
+				{
+					"name": "Get Location Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stock/location/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "stock", "location", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get stock location details"
+					}
+				}
+			],
+			"description": "Stock location management"
+		},
+		{
+			"name": "Bill of Materials (BOM)",
+			"item": [
+				{
+					"name": "List BOM Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bom/?part=:part_id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "bom", ""],
+							"query": [
+								{
+									"key": "part",
+									"value": ":part_id"
+								}
+							],
+							"variable": [
+								{
+									"key": "part_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "List BOM items for a part"
+					}
+				},
+				{
+					"name": "Create BOM Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"part\": 1,\n    \"sub_part\": 2,\n    \"quantity\": 5,\n    \"reference\": \"R1\",\n    \"optional\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/bom/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "bom", ""]
+						},
+						"description": "Create a new BOM item"
+					}
+				},
+				{
+					"name": "Get BOM Item Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bom/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "bom", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get BOM item details"
+					}
+				},
+				{
+					"name": "Delete BOM Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bom/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "bom", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Delete a BOM item"
+					}
+				}
+			],
+			"description": "Bill of Materials management"
+		},
+		{
+			"name": "Build Orders",
+			"item": [
+				{
+					"name": "List Build Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/build/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "build", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "part",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all build orders"
+					}
+				},
+				{
+					"name": "Create Build Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"part\": 1,\n    \"quantity\": 10,\n    \"reference\": \"BUILD-001\",\n    \"title\": \"Production Build\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/build/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "build", ""]
+						},
+						"description": "Create a new build order"
+					}
+				},
+				{
+					"name": "Get Build Order Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/build/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "build", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get build order details"
+					}
+				},
+				{
+					"name": "Allocate Stock to Build",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"build\": 1,\n    \"bom_item\": 1,\n    \"stock_item\": 1,\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/build/item/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "build", "item", ""]
+						},
+						"description": "Allocate stock to a build order"
+					}
+				},
+				{
+					"name": "Complete Build Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accept_unallocated\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/build/:id/complete/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "build", ":id", "complete", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Complete a build order"
+					}
+				}
+			],
+			"description": "Build order management and operations"
+		},
+		{
+			"name": "Purchase Orders",
+			"item": [
+				{
+					"name": "List Purchase Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/order/po/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "po", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "supplier",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all purchase orders"
+					}
+				},
+				{
+					"name": "Create Purchase Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"supplier\": 1,\n    \"reference\": \"PO-001\",\n    \"description\": \"Purchase order for components\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/po/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "po", ""]
+						},
+						"description": "Create a new purchase order"
+					}
+				},
+				{
+					"name": "Get Purchase Order Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/order/po/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "po", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get purchase order details"
+					}
+				},
+				{
+					"name": "Add Line Item to PO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"order\": 1,\n    \"part\": 1,\n    \"quantity\": 100,\n    \"purchase_price\": 1.50,\n    \"purchase_price_currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/po-line/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "po-line", ""]
+						},
+						"description": "Add a line item to a purchase order"
+					}
+				},
+				{
+					"name": "Receive Items",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"line_item\": 1,\n            \"quantity\": 50,\n            \"location\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/po/:id/receive/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "po", ":id", "receive", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Receive items from a purchase order"
+					}
+				}
+			],
+			"description": "Purchase order management"
+		},
+		{
+			"name": "Sales Orders",
+			"item": [
+				{
+					"name": "List Sales Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/order/so/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "so", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "customer",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all sales orders"
+					}
+				},
+				{
+					"name": "Create Sales Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customer\": 1,\n    \"reference\": \"SO-001\",\n    \"description\": \"Sales order for customer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/so/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "so", ""]
+						},
+						"description": "Create a new sales order"
+					}
+				},
+				{
+					"name": "Get Sales Order Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/order/so/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "so", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get sales order details"
+					}
+				},
+				{
+					"name": "Add Line Item to SO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"order\": 1,\n    \"part\": 1,\n    \"quantity\": 10,\n    \"sale_price\": 25.00,\n    \"sale_price_currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/so-line/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "so-line", ""]
+						},
+						"description": "Add a line item to a sales order"
+					}
+				},
+				{
+					"name": "Allocate Stock to SO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"line_item\": 1,\n    \"stock_item\": 1,\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/order/so-allocation/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "order", "so-allocation", ""]
+						},
+						"description": "Allocate stock to a sales order line"
+					}
+				}
+			],
+			"description": "Sales order management"
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "List Companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/company/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "is_supplier",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "is_customer",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List all companies (suppliers and customers)"
+					}
+				},
+				{
+					"name": "Create Company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ACME Corp\",\n    \"description\": \"Electronics supplier\",\n    \"is_supplier\": true,\n    \"is_customer\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/company/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company", ""]
+						},
+						"description": "Create a new company"
+					}
+				},
+				{
+					"name": "Get Company Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/company/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get company details"
+					}
+				},
+				{
+					"name": "List Supplier Parts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/company/part/?supplier=:supplier_id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company", "part", ""],
+							"query": [
+								{
+									"key": "supplier",
+									"value": ":supplier_id"
+								}
+							],
+							"variable": [
+								{
+									"key": "supplier_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "List supplier parts"
+					}
+				},
+				{
+					"name": "Create Supplier Part",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"part\": 1,\n    \"supplier\": 1,\n    \"SKU\": \"SUPPLIER-SKU-001\",\n    \"description\": \"Supplier part description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/company/part/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company", "part", ""]
+						},
+						"description": "Create a supplier part"
+					}
+				}
+			],
+			"description": "Company (supplier/customer) management"
+		},
+		{
+			"name": "Barcodes",
+			"item": [
+				{
+					"name": "Scan Barcode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"barcode\": \"BARCODE_DATA_HERE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/barcode/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "barcode", ""]
+						},
+						"description": "Scan and decode a barcode"
+					}
+				},
+				{
+					"name": "Link Barcode to Part",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"part\": 1,\n    \"barcode_data\": \"CUSTOM_BARCODE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/barcode/link/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "barcode", "link", ""]
+						},
+						"description": "Link a barcode to a part"
+					}
+				},
+				{
+					"name": "Unlink Barcode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"barcode_data\": \"CUSTOM_BARCODE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/barcode/unlink/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "barcode", "unlink", ""]
+						},
+						"description": "Unlink a barcode"
+					}
+				}
+			],
+			"description": "Barcode scanning and management"
+		},
+		{
+			"name": "Plugins",
+			"item": [
+				{
+					"name": "List Plugins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/plugin/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "plugin", ""]
+						},
+						"description": "List all installed plugins"
+					}
+				},
+				{
+					"name": "Get Plugin Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/plugin/:key/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "plugin", ":key", ""],
+							"variable": [
+								{
+									"key": "key",
+									"value": "inventreebarcode"
+								}
+							]
+						},
+						"description": "Get plugin details"
+					}
+				},
+				{
+					"name": "Activate Plugin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/plugin/:key/activate/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "plugin", ":key", "activate", ""],
+							"variable": [
+								{
+									"key": "key",
+									"value": "inventreebarcode"
+								}
+							]
+						},
+						"description": "Activate a plugin"
+					}
+				}
+			],
+			"description": "Plugin management"
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "List Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "read",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						},
+						"description": "List user notifications"
+					}
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"read\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Mark a notification as read"
+					}
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Delete a notification"
+					}
+				}
+			],
+			"description": "Notification management"
+		},
+		{
+			"name": "Reports & Labels",
+			"item": [
+				{
+					"name": "List Report Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/report/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "report", ""]
+						},
+						"description": "List all report templates"
+					}
+				},
+				{
+					"name": "Print Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/report/print/:template_id/?items=:item_ids",
+							"host": ["{{base_url}}"],
+							"path": ["api", "report", "print", ":template_id", ""],
+							"query": [
+								{
+									"key": "items",
+									"value": ":item_ids"
+								}
+							],
+							"variable": [
+								{
+									"key": "template_id",
+									"value": "1"
+								},
+								{
+									"key": "item_ids",
+									"value": "1,2,3"
+								}
+							]
+						},
+						"description": "Generate and print a report"
+					}
+				},
+				{
+					"name": "List Label Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/label/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "label", ""]
+						},
+						"description": "List all label templates"
+					}
+				},
+				{
+					"name": "Print Label",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/label/print/:template_id/?items=:item_ids",
+							"host": ["{{base_url}}"],
+							"path": ["api", "label", "print", ":template_id", ""],
+							"query": [
+								{
+									"key": "items",
+									"value": ":item_ids"
+								}
+							],
+							"variable": [
+								{
+									"key": "template_id",
+									"value": "1"
+								},
+								{
+									"key": "item_ids",
+									"value": "1,2,3"
+								}
+							]
+						},
+						"description": "Generate and print labels"
+					}
+				}
+			],
+			"description": "Report and label generation"
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "List Global Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/settings/global/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings", "global", ""]
+						},
+						"description": "List all global settings"
+					}
+				},
+				{
+					"name": "Get Global Setting",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/settings/global/:key/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings", "global", ":key", ""],
+							"variable": [
+								{
+									"key": "key",
+									"value": "INVENTREE_INSTANCE"
+								}
+							]
+						},
+						"description": "Get a specific global setting"
+					}
+				},
+				{
+					"name": "Update Global Setting",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"New Value\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/settings/global/:key/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings", "global", ":key", ""],
+							"variable": [
+								{
+									"key": "key",
+									"value": "INVENTREE_INSTANCE"
+								}
+							]
+						},
+						"description": "Update a global setting"
+					}
+				},
+				{
+					"name": "List User Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/settings/user/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings", "user", ""]
+						},
+						"description": "List all user settings"
+					}
+				},
+				{
+					"name": "Update User Setting",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"New Value\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/settings/user/:key/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings", "user", ":key", ""],
+							"variable": [
+								{
+									"key": "key",
+									"value": "HOMEPAGE_PART_LATEST"
+								}
+							]
+						},
+						"description": "Update a user setting"
+					}
+				}
+			],
+			"description": "System and user settings management"
+		},
+		{
+			"name": "Users & Permissions",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", ""]
+						},
+						"description": "List all users"
+					}
+				},
+				{
+					"name": "Get User Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get user details"
+					}
+				},
+				{
+					"name": "List Groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/group/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "group", ""]
+						},
+						"description": "List all user groups"
+					}
+				},
+				{
+					"name": "Get Group Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/group/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "user", "group", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get group details"
+					}
+				}
+			],
+			"description": "User and permission management"
+		},
+		{
+			"name": "Background Tasks",
+			"item": [
+				{
+					"name": "List Background Tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/background-task/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "background-task", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "List background tasks"
+					}
+				},
+				{
+					"name": "Get Task Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/background-task/:id/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "background-task", ":id", ""],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get background task details"
+					}
+				}
+			],
+			"description": "Background task monitoring"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "List Error Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/error-log/?limit=25&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "error-log", ""],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "List system error logs"
+					}
+				},
+				{
+					"name": "Get System Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/health/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "health", ""]
+						},
+						"description": "Get system health status"
+					}
+				}
+			],
+			"description": "Administrative endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
+
