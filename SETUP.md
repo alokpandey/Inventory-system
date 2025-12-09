@@ -2,7 +2,7 @@
 
 This repository contains the complete InvenTree inventory management system with Docker setup and Postman API collection.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
@@ -15,7 +15,7 @@ This repository contains the complete InvenTree inventory management system with
 
 ---
 
-## 🔧 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:
 
@@ -36,7 +36,7 @@ git --version
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 Get InvenTree up and running in 5 minutes:
 
@@ -64,7 +64,7 @@ That's it! InvenTree should now be running at **http://localhost**
 
 ---
 
-## 📖 Detailed Setup Instructions
+## Detailed Setup Instructions
 
 ### Step 1: Clone the Repository
 
@@ -103,7 +103,7 @@ nano .env  # or use your preferred editor
 | `INVENTREE_EXT_VOLUME` | `./inventree-data` | Directory for persistent data storage |
 | `INVENTREE_TAG` | `stable` | InvenTree version (stable/latest/specific version) |
 
-⚠️ **Security Note:** For production deployments, always change the default database credentials!
+**Security Note:** For production deployments, always change the default database credentials!
 
 ### Step 4: Initialize the Database
 
@@ -114,11 +114,11 @@ docker compose run --rm inventree-server invoke update
 ```
 
 This command will:
-- ✅ Install required Python packages
-- ✅ Create a new PostgreSQL database
-- ✅ Apply database migrations
-- ✅ Update translation files
-- ✅ Collect static files
+- Install required Python packages
+- Create a new PostgreSQL database
+- Apply database migrations
+- Update translation files
+- Collect static files
 
 **Expected output:** You should see migration messages and "OK" confirmations.
 
@@ -143,7 +143,7 @@ INVENTREE_ADMIN_PASSWORD=your_secure_password
 INVENTREE_ADMIN_EMAIL=admin@example.com
 ```
 
-⚠️ **Important:** Remove these credentials from `.env` after first run for security!
+**Important:** Remove these credentials from `.env` after first run for security!
 
 ### Step 6: Start Docker Containers
 
@@ -183,7 +183,7 @@ Press `Ctrl+C` to stop following logs.
 
 ---
 
-## 🌐 Accessing InvenTree
+## Accessing InvenTree
 
 Once all containers are running:
 
@@ -223,7 +223,7 @@ To access InvenTree from other devices on your network:
 
 ---
 
-## 🔌 API Testing with Postman
+## API Testing with Postman
 
 This repository includes a complete Postman collection with 100+ API requests.
 
@@ -258,20 +258,20 @@ This repository includes a complete Postman collection with 100+ API requests.
 ### API Categories Included
 
 The Postman collection includes requests for:
-- 🔐 Authentication & User Management
-- 📦 Parts & Categories
-- 📊 Stock Management
-- 🏭 Build Orders
-- 🛒 Purchase Orders
-- 💰 Sales Orders
-- 🏢 Companies (Suppliers/Manufacturers/Customers)
-- 🔧 Settings & Configuration
-- 📋 Reports & Labels
+- Authentication & User Management
+- Parts & Categories
+- Stock Management
+- Build Orders
+- Purchase Orders
+- Sales Orders
+- Companies (Suppliers/Manufacturers/Customers)
+- Settings & Configuration
+- Reports & Labels
 - And much more!
 
 ---
 
-## 🔄 Updating InvenTree
+## Updating InvenTree
 
 To update to the latest version of InvenTree:
 
@@ -301,7 +301,7 @@ docker compose up -d
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Containers Won't Start
 
@@ -359,7 +359,7 @@ sudo chown -R $USER:$USER contrib/container/inventree-data
 
 ### Reset Everything (Fresh Start)
 
-⚠️ **Warning:** This will delete all data!
+**Warning:** This will delete all data!
 
 ```bash
 # Stop and remove containers
@@ -376,7 +376,7 @@ docker compose up -d
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 ### Official Documentation
 
@@ -430,27 +430,27 @@ docker compose run --rm inventree-server invoke dev.setup-test -i
 
 ---
 
-## 🎯 Next Steps
+## Next Steps
 
 After successful installation:
 
-1. ✅ **Explore the Web Interface** - Familiarize yourself with the UI
-2. ✅ **Test the API** - Use the Postman collection to explore API endpoints
-3. ✅ **Configure Settings** - Customize InvenTree for your needs (Settings → System Settings)
-4. ✅ **Create Part Categories** - Set up your inventory structure
-5. ✅ **Add Parts** - Start adding your inventory items
-6. ✅ **Set up Suppliers** - Add your supplier information
-7. ✅ **Configure Plugins** - Extend functionality with plugins
+1. **Explore the Web Interface** - Familiarize yourself with the UI
+2. **Test the API** - Use the Postman collection to explore API endpoints
+3. **Configure Settings** - Customize InvenTree for your needs (Settings → System Settings)
+4. **Create Part Categories** - Set up your inventory structure
+5. **Add Parts** - Start adding your inventory items
+6. **Set up Suppliers** - Add your supplier information
+7. **Configure Plugins** - Extend functionality with plugins
 
 ---
 
-## 📄 License
+## License
 
 InvenTree is distributed under the MIT License. See `LICENSE` file for more information.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 InvenTree is an open-source project maintained by the InvenTree community. This repository contains the complete InvenTree system for easy local deployment.
 
@@ -458,5 +458,5 @@ InvenTree is an open-source project maintained by the InvenTree community. This 
 
 ---
 
-**Happy Inventory Management! 🎉**
+**Happy Inventory Management!**
 
