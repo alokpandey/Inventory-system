@@ -99,7 +99,7 @@ nano .env  # or use your preferred editor
 |----------|---------|-------------|
 | `INVENTREE_SITE_URL` | `http://localhost` | URL where InvenTree will be accessible |
 | `INVENTREE_DB_USER` | `pguser` | PostgreSQL database username |
-| `INVENTREE_DB_PASSWORD` | `pgpassword` | PostgreSQL database password (⚠️ change for production!) |
+| `INVENTREE_DB_PASSWORD` | `pgpassword` | PostgreSQL database password (change for production!) |
 | `INVENTREE_EXT_VOLUME` | `./inventree-data` | Directory for persistent data storage |
 | `INVENTREE_TAG` | `stable` | InvenTree version (stable/latest/specific version) |
 
