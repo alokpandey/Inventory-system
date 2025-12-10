@@ -1375,20 +1375,20 @@ def setup_test(
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
+    # Check if demo dataset directory already exists (e.g., mounted volume)
     if template_dir.exists():
-        info('Removing old data ...')
-        run(c, f'rm {template_dir} -r')
+        info(f'Using existing demo dataset at {template_dir} ...')
+    else:
+        # Clone demo dataset if it doesn't exist
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
-
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -v --depth=1')
+        # Get test data
+        info('Cloning demo dataset ...')
+        run(c, f'git clone {URL} {template_dir} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:

@@ -45,22 +45,15 @@ Get InvenTree up and running in 5 minutes:
 git clone https://github.com/alokpandey/Inventory-system.git
 cd Inventory-system
 
-# 2. Navigate to Docker setup directory
-cd contrib/container
+# 2. Run the following commands in sequence from root of the repository
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-test --dev
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 
-# 3. Initialize the database
-docker compose run --rm inventree-server invoke update
-
-# 4. Create admin account (follow the prompts)
-docker compose run --rm inventree-server invoke superuser
-
-# 5. Start all containers
-docker compose up -d
-
-# 6. Access InvenTree at http://localhost
+# 6. Access InvenTree at http://localhost:8000
 ```
 
-That's it! InvenTree should now be running at **http://localhost**
+That's it! InvenTree should now be running at **http://localhost:8000**
 
 ---
 
@@ -73,102 +66,46 @@ git clone https://github.com/alokpandey/Inventory-system.git
 cd Inventory-system
 ```
 
-### Step 2: Navigate to Docker Configuration
+### Step 2: Bring up dev environment using docker compose
 
 ```bash
-cd contrib/container
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-test --dev
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
-
-This directory contains all the necessary Docker configuration files:
-- `docker-compose.yml` - Container orchestration
-- `.env` - Environment variables
-- `Caddyfile` - Reverse proxy configuration
 
 ### Step 3: Configure Environment Variables (Optional)
 
-The `.env` file is pre-configured with sensible defaults. However, you may want to customize:
+The `docker.dev.env` file is pre-configured with sensible defaults. However, you may want to customize:
 
 ```bash
 # Edit the .env file
-nano .env  # or use your preferred editor
+nano docker.dev.env  # or use your preferred editor
 ```
 
 **Important variables to review:**
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `INVENTREE_SITE_URL` | `http://localhost` | URL where InvenTree will be accessible |
+| `INVENTREE_SITE_URL` | `http://localhost:8000` | URL where InvenTree will be accessible |
 | `INVENTREE_DB_USER` | `pguser` | PostgreSQL database username |
 | `INVENTREE_DB_PASSWORD` | `pgpassword` | PostgreSQL database password (change for production!) |
-| `INVENTREE_EXT_VOLUME` | `./inventree-data` | Directory for persistent data storage |
-| `INVENTREE_TAG` | `stable` | InvenTree version (stable/latest/specific version) |
 
 **Security Note:** For production deployments, always change the default database credentials!
 
-### Step 4: Initialize the Database
+### Step 4: Use pre-created admin account
 
-Run the database initialization command:
-
-```bash
-docker compose run --rm inventree-server invoke update
+```text
+username: admin
+password: inventree
 ```
 
-This command will:
-- Install required Python packages
-- Create a new PostgreSQL database
-- Apply database migrations
-- Update translation files
-- Collect static files
-
-**Expected output:** You should see migration messages and "OK" confirmations.
-
-### Step 5: Create Administrator Account
-
-Create your admin user account:
-
-```bash
-docker compose run --rm inventree-server invoke superuser
-```
-
-You'll be prompted to enter:
-- Username
-- Email address
-- Password (entered twice for confirmation)
-
-**Alternative:** You can also set admin credentials in the `.env` file:
-
-```bash
-INVENTREE_ADMIN_USER=admin
-INVENTREE_ADMIN_PASSWORD=your_secure_password
-INVENTREE_ADMIN_EMAIL=admin@example.com
-```
-
-**Important:** Remove these credentials from `.env` after first run for security!
-
-### Step 6: Start Docker Containers
-
-Launch all InvenTree services:
-
-```bash
-docker compose up -d
-```
-
-This starts 5 containers:
-
-| Container | Service | Port |
-|-----------|---------|------|
-| `inventree-db` | PostgreSQL 17 Database | 5432 (internal) |
-| `inventree-cache` | Redis 7 Cache | 6379 (internal) |
-| `inventree-server` | Django/Gunicorn Web Server | 8000 (internal) |
-| `inventree-worker` | Django-Q Background Worker | - |
-| `inventree-proxy` | Caddy Reverse Proxy | 80, 443 |
-
-### Step 7: Verify Installation
+### Step 5: Verify Installation
 
 Check that all containers are running:
 
 ```bash
-docker compose ps
+docker compose --project-directory . -f contrib/container/dev-docker-compose.ymlps
 ```
 
 All containers should show status as "Up" or "running".
@@ -176,7 +113,7 @@ All containers should show status as "Up" or "running".
 View logs to ensure no errors:
 
 ```bash
-docker compose logs -f
+docker compose --project-directory . -f contrib/container/dev-docker-compose.ymllogs -f
 ```
 
 Press `Ctrl+C` to stop following logs.
@@ -188,14 +125,14 @@ Press `Ctrl+C` to stop following logs.
 Once all containers are running:
 
 1. **Open your web browser**
-2. **Navigate to:** [http://localhost](http://localhost)
+2. **Navigate to:** [http://localhost:8000](http://localhost:8000)
 3. **Login** with the admin credentials you created in Step 5
 
 ### Default Access Points
 
-- **Web Interface:** http://localhost
-- **API Documentation:** http://localhost/api/
-- **Admin Panel:** http://localhost/admin/
+- **Web Interface:** http://localhost:8000
+- **API Documentation:** http://localhost:8000/api/
+- **Admin Panel:** http://localhost:8000/admin/
 
 ### External Access
 
@@ -241,9 +178,9 @@ This repository includes a complete Postman collection with 100+ API requests.
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `base_url` | `http://localhost` | Your InvenTree URL |
+| `base_url` | `http://localhost:8000` | Your InvenTree URL |
 | `username` | `admin` | Your admin username |
-| `password` | `your_password` | Your admin password |
+| `password` | `inventree` | Your admin password |
 | `auth_token` | (leave empty) | Will be auto-populated |
 
 3. **Save the environment** and select it
@@ -252,7 +189,7 @@ This repository includes a complete Postman collection with 100+ API requests.
 
 1. Navigate to **"Authentication" → "Get Token"** in the collection
 2. Click **"Send"**
-3. The `auth_token` variable will be automatically set
+3. The `auth_token` variable will be automatically set (If not set, set it manually)
 4. You can now use any API endpoint in the collection!
 
 ### API Categories Included
@@ -278,25 +215,25 @@ To update to the latest version of InvenTree:
 ### Step 1: Stop Containers
 
 ```bash
-docker compose down
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml down
 ```
 
 ### Step 2: Pull Latest Images
 
 ```bash
-docker compose pull
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml pull
 ```
 
 ### Step 3: Update Database
 
 ```bash
-docker compose run --rm inventree-server invoke update
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-server invoke update
 ```
 
 ### Step 4: Restart Containers
 
 ```bash
-docker compose up -d
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
 
 ---
@@ -312,15 +249,15 @@ docker ps
 
 **View container logs:**
 ```bash
-docker compose logs inventree-server
-docker compose logs inventree-db
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml logs inventree-server
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml logs inventree-db
 ```
 
 ### Cannot Access http://localhost
 
 **Check if containers are running:**
 ```bash
-docker compose ps
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml ps
 ```
 
 **Check port 80 is not in use:**
@@ -341,8 +278,8 @@ http://localhost:8000
 
 **Restart the database container:**
 ```bash
-docker compose restart inventree-db
-docker compose restart inventree-server
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml restart inventree-db
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml restart inventree-server
 ```
 
 ### Permission Denied Errors
@@ -363,15 +300,12 @@ sudo chown -R $USER:$USER contrib/container/inventree-data
 
 ```bash
 # Stop and remove containers
-docker compose down -v
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml down -v
 
 # Remove data directory
 rm -rf inventree-data
 
 # Start fresh
-docker compose run --rm inventree-server invoke update
-docker compose run --rm inventree-server invoke superuser
-docker compose up -d
 ```
 
 ---
@@ -396,37 +330,6 @@ docker compose up -d
 - **GitHub Issues:** https://github.com/inventree/InvenTree/issues
 - **Documentation:** https://docs.inventree.org/
 - **Demo Instance:** https://demo.inventree.org/
-
-### Useful Commands
-
-```bash
-# View all running containers
-docker compose ps
-
-# View logs (all containers)
-docker compose logs -f
-
-# View logs (specific container)
-docker compose logs -f inventree-server
-
-# Stop all containers
-docker compose down
-
-# Start all containers
-docker compose up -d
-
-# Restart a specific container
-docker compose restart inventree-server
-
-# Execute command in running container
-docker compose exec inventree-server bash
-
-# Backup database
-docker compose run --rm inventree-server invoke export-records -f /home/inventree/data/backup.json
-
-# Load demo data
-docker compose run --rm inventree-server invoke dev.setup-test -i
-```
 
 ---
 

@@ -83,6 +83,7 @@ dev/
 dev-db/
 data/
 env/
+.pre-commit-config.yaml
 
 # Locale stats file
 src/backend/InvenTree/InvenTree/locale_stats.json

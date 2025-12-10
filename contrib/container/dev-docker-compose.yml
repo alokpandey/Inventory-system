@@ -48,6 +48,8 @@ services:
         volumes:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
+            # Mount demo dataset directory
+            - ./demo-dataset:/home/inventree/inventree-demo-dataset:z
         env_file:
             - contrib/container/docker.dev.env
         restart: unless-stopped
@@ -62,6 +64,8 @@ services:
         volumes:
             # Mount local source directory to /home/inventree
             - ./:/home/inventree:z
+            # Mount demo dataset directory
+            - ./demo-dataset:/home/inventree/inventree-demo-dataset:z
         env_file:
             - contrib/container/docker.dev.env
         restart: unless-stopped
