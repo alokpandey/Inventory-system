@@ -72,6 +72,10 @@ cd Inventory-system
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.setup-test --dev
 docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke int.frontend-build
+# Have seen the UI doesn't hot reload, so stop and start again
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml down
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
 
 ### Step 3: Configure Environment Variables (Optional)
