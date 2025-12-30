@@ -206,4 +206,4 @@ Find a full list of used third-party libraries in the license information dialog
 <!-- License -->
 ## :warning: License
 
-Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See [LICENSE.txt](https://github.com/inventree/InvenTree/blob/master/LICENSE) for more information.
+Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See [LICENSE.txt](https://github.com/alokpandey/Inventory-system/blob/main/LICENSE) for more information.

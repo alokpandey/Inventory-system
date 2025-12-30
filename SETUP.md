@@ -331,7 +331,7 @@ rm -rf inventree-data
 
 ### Community & Support
 
-- **GitHub Issues:** https://github.com/inventree/InvenTree/issues
+- **GitHub Issues:** https://github.com/alokpandey/Inventory-system/issues
 - **Documentation:** https://docs.inventree.org/
 - **Demo Instance:** https://demo.inventree.org/
 
@@ -361,7 +361,7 @@ InvenTree is distributed under the MIT License. See `LICENSE` file for more info
 
 InvenTree is an open-source project maintained by the InvenTree community. This repository contains the complete InvenTree system for easy local deployment.
 
-**Original Project:** https://github.com/inventree/InvenTree
+**Original Project:** https://github.com/alokpandey/Inventory-system
 
 ---
 

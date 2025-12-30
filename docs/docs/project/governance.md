@@ -27,7 +27,7 @@ A list of proofreaders is being maintained on [GitHub](https://github.com/invent
 
 ## Write access to the code base
 
-Write access to the code base is granted to a very small number of developers. In daily operations only the [maintainer](#maintainer) is expected to make changes to the master or stable branches.
+Write access to the code base is granted to a very small number of developers. In daily operations only the [maintainer](#maintainer) is expected to make changes to the main or stable branches.
 
 To reduce the risk of losing the possibility to address security issues in a timely manner additional members are granted access.
 

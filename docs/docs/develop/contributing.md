@@ -60,7 +60,7 @@ invoke dev.setup-dev
 InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/version-control/what-are-gitlab-flow-best-practices/) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
 
 There are nominally 5 active branches:
-- `master` - The main development branch
+- `main` - The main development branch
 - `stable` - The latest stable release
 - `l10n` - Translation branch: Source to Crowdin
 - `l10_crowdin` - Translation branch: Source from Crowdin
@@ -75,19 +75,19 @@ InvenTree version numbering follows the [semantic versioning](https://semver.org
 
 ### Main Development Branch
 
-The HEAD of the "master" branch of InvenTree represents the current "latest" state of code development.
+The HEAD of the "main" branch of InvenTree represents the current "latest" state of code development.
 
-- All feature branches are merged into master
-- All bug fixes are merged into master
+- All feature branches are merged into main
+- All bug fixes are merged into main
 
-**No pushing to master:** New features must be submitted as a pull request from a separate branch (one branch per feature).
+**No pushing to main:** New features must be submitted as a pull request from a separate branch (one branch per feature).
 
 ### Feature Branches
 
-Feature branches should be branched *from* the *master* branch.
+Feature branches should be branched *from* the *main* branch.
 
 - One major feature per branch / pull request
-- Feature pull requests are merged back *into* the master branch
+- Feature pull requests are merged back *into* the main branch
 
 ### Stable Branch
 
@@ -101,19 +101,19 @@ The HEAD of the "stable" branch represents the latest stable release code.
 
 - If a bug is discovered in a tagged release version of InvenTree, a "bugfix" or "hotfix" branch should be made *from* that tagged release
 - When approved, the branch is merged back *into* stable, with an incremented PATCH number (e.g. 0.4.1 -> 0.4.2)
-- The bugfix *must* also be cherry picked into the *master* branch.
-- A bugfix *might* also be backported from *master* to the *stable* branch automatically if marked with the `backport` label.
+- The bugfix *must* also be cherry picked into the *main* branch.
+- A bugfix *might* also be backported from *main* to the *stable* branch automatically if marked with the `backport` label.
 
 ### Translation Branches
 
 Crowdin is used for web-based translation management. The handling of files is fully automated, the `l10n` and `l10_crowdin` branches are used to manage the translation process and are not meant to be touched manually by anyone.
 
 The translation process is as follows:
-1. Commits to `master` trigger CI by GitHub Actions
+1. Commits to `main` trigger CI by GitHub Actions
 2. Translation source files are created and automatically pushed to the `l10n` branch - this is the source branch for Crowdin
 3. Crowdin picks up on the new source files and makes them available for translation
 4. Translations made in Crowdin are automatically pushed back to the `l10_crowdin` branch by Crowdin once they are approved
-5. The `l10_crowdin` branch is merged back into `master` by a maintainer periodically
+5. The `l10_crowdin` branch is merged back into `main` by a maintainer periodically
 
 ## API versioning
 

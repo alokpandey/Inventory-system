@@ -15,7 +15,7 @@ The head of the *stable* code branch represents the most recent stable tagged re
 
 ### Development Branch
 
-The head of the *master* code branch represents the "latest and greatest" working codebase. All features and bug fixes are merged into the master branch, in addition to relevant stable release branches.
+The head of the *main* code branch represents the "latest and greatest" working codebase. All features and bug fixes are merged into the main branch, in addition to relevant stable release branches.
 
 !!! info "{{ icon("brand-docker") }} Latest Docker"
     To pull down the latest *development* version of InvenTree in docker, use `inventree/inventree:latest`
@@ -27,7 +27,7 @@ The head of the *master* code branch represents the "latest and greatest" workin
 
 ## Upcoming Features
 
-In-progress and upcoming features can be viewed on [GitHub](https://github.com/inventree/inventree/pulls), where the InvenTree source code is hosted.
+In-progress and upcoming features can be viewed on [GitHub](https://github.com/alokpandey/Inventory-system/pulls), where the InvenTree source code is hosted.
 
 ## Suggest Something New
 

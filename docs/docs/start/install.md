@@ -298,11 +298,11 @@ Update the InvenTree source code to the latest version (or a particular commit i
 For example, pull down the latest InvenTree sourcecode using Git:
 
 ```
-git pull origin master
+git pull origin main
 ```
 
 !!! info "Release Versions"
-    If you are using a particular version of InvenTree, you may wish to target a specific code branch or tag, instead of just pulling down latest master
+    If you are using a particular version of InvenTree, you may wish to target a specific code branch or tag, instead of just pulling down latest main
 
 ### Perform Database Migrations
 

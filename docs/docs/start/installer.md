@@ -10,7 +10,7 @@ Supported OSs are Debian 10, 11, 12 and Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS.
 ### Quick Script
 
 ```bash
-wget -qO install.sh https://get.inventree.org && bash install.sh
+wget -qO install.sh https://raw.githubusercontent.com/alokpandey/Inventory-system/main/contrib/installer/install.sh && bash install.sh
 ```
 
 This script does all manual steps without any input. The installation might take up to 5-10 minutes to finish.
@@ -20,7 +20,7 @@ This script does all manual steps without any input. The installation might take
 The above command may need to be run with `sudo` permissions, depending on the system configuration. So, if the script fails with a permission error, try:
 
 ```bash
-sudo wget -qO install.sh https://get.inventree.org && sudo bash install.sh
+sudo wget -qO install.sh https://raw.githubusercontent.com/alokpandey/Inventory-system/main/contrib/installer/install.sh && sudo bash install.sh
 ```
 
 #### Frequently Asked Questions
@@ -50,15 +50,15 @@ The installer script performs the following functions:
 The install script supports pulling packages from different branches and publishers.
 Defaults are to use branch `stable` and publisher `inventree`.
 
-For example to install the `master` (latest) InvenTree code:
+For example to install the `main` (latest) InvenTree code:
 
 ```bash
-install master inventree
+install main inventree
 ```
 
-To install from branch master and publisher matmair the install command would be.
+To install from branch main and publisher alokpandey the install command would be.
 ```bash
-install master matmair
+install main alokpandey
 ```
 
 Furthermore there are several command flags for advanced usage:
