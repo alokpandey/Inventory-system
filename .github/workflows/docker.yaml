@@ -1,7 +1,7 @@
 # Build, test and push InvenTree docker image
 # This workflow runs under any of the following conditions:
 #
-# - Push to the master branch
+# - Push to the main branch
 # - Publish release
 #
 # The following actions are performed:
@@ -19,10 +19,10 @@ on:
 
   push:
     branches:
-      - "master"
+      - "main"
   pull_request:
     branches:
-      - "master"
+      - "main"
 
 permissions:
   contents: read
