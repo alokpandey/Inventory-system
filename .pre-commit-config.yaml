@@ -77,7 +77,7 @@ repos:
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         files: ^src/frontend/.*\.(js|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.0
+    rev: v8.29.1
     hooks:
     -   id: gitleaks
         language_version: 1.23.6
