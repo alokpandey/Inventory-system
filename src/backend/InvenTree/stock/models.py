@@ -236,6 +236,13 @@ class StockLocation(
         help_text=_('Stock location type of this location'),
     )
 
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Notes'),
+        help_text=_('Additional notes or information about this stock location'),
+    )
+
     @property
     def icon(self) -> str:
         """Get the current icon used for this location.

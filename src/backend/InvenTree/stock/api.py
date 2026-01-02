@@ -415,7 +415,7 @@ class StockLocationList(
     filter_backends = SEARCH_ORDER_FILTER
     output_options = StockLocationOutputOptions
 
-    search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
+    search_fields = ['name', 'description', 'pathstring', 'notes', 'tags__name', 'tags__slug']
 
     ordering_fields = ['name', 'pathstring', 'items', 'level', 'tree_id', 'lft']
 
