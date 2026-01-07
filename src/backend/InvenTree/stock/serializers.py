@@ -1159,6 +1159,7 @@ class LocationSerializer(
             'external',
             'location_type',
             'location_type_detail',
+            'notes',
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
