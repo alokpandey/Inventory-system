@@ -1565,6 +1565,212 @@ class StockLocationTest(InvenTreeTestCase):
         self.assertEqual(loc.icon, '')
 
 
+class StockLocationNotesTest(InvenTreeTestCase):
+    """Tests for the StockLocation notes field."""
+
+    def test_create_location_with_notes(self):
+        """Verify StockLocation can be created with notes field populated."""
+        # Arrange: Prepare markdown notes content
+        notes_content = """# Handling Requirements
+
+## Special Instructions
+- Requires forklift access
+- Temperature-controlled area
+- Maximum weight: 500kg
+
+**Important:** This is a quarantine cage."""
+
+        # Act: Create StockLocation with notes field
+        location = StockLocation.objects.create(
+            name='Test Location with Notes',
+            notes=notes_content
+        )
+
+        # Assert: Location is created successfully and notes are retrievable
+        self.assertIsNotNone(location.pk)
+        self.assertEqual(location.notes, notes_content)
+
+        # Verify notes are persisted to database
+        location.refresh_from_db()
+        self.assertEqual(location.notes, notes_content)
+
+    def test_create_location_without_notes(self):
+        """Verify notes field accepts null/blank values (optional field)."""
+        # Act: Create StockLocation without notes field
+        location1 = StockLocation.objects.create(name='Test Location No Notes 1')
+        location2 = StockLocation.objects.create(name='Test Location No Notes 2', notes=None)
+        location3 = StockLocation.objects.create(name='Test Location No Notes 3', notes='')
+
+        # Assert: Locations are created successfully
+        self.assertIsNotNone(location1.pk)
+        self.assertIsNotNone(location2.pk)
+        self.assertIsNotNone(location3.pk)
+
+        # Assert: Notes field is None or empty string
+        self.assertIsNone(location1.notes)
+        self.assertIsNone(location2.notes)
+        self.assertEqual(location3.notes, '')
+
+        # No validation errors occur
+        location1.full_clean()
+        location2.full_clean()
+        location3.full_clean()
+
+    def test_update_location_notes(self):
+        """Verify notes field can be updated on existing location."""
+        # Arrange: Create StockLocation with initial notes
+        initial_notes = 'Initial notes content'
+        location = StockLocation.objects.create(
+            name='Test Location Update',
+            notes=initial_notes
+        )
+        self.assertEqual(location.notes, initial_notes)
+
+        # Act: Update notes field with new content
+        new_notes = '## Updated Notes\n\nThis content has been updated.'
+        location.notes = new_notes
+        location.save()
+
+        # Assert: Notes field is updated successfully
+        self.assertEqual(location.notes, new_notes)
+
+        # Verify new content is persisted to database
+        location.refresh_from_db()
+        self.assertEqual(location.notes, new_notes)
+        self.assertNotEqual(location.notes, initial_notes)
+
+    def test_clear_location_notes(self):
+        """Verify notes field can be cleared (set to null/blank)."""
+        # Arrange: Create StockLocation with notes
+        location = StockLocation.objects.create(
+            name='Test Location Clear',
+            notes='Some notes to be cleared'
+        )
+        self.assertIsNotNone(location.notes)
+
+        # Act: Set notes to None
+        location.notes = None
+        location.save()
+
+        # Assert: Notes field is cleared successfully
+        self.assertIsNone(location.notes)
+        location.refresh_from_db()
+        self.assertIsNone(location.notes)
+
+        # Test clearing with empty string
+        location.notes = 'New notes'
+        location.save()
+        location.notes = ''
+        location.save()
+        self.assertEqual(location.notes, '')
+
+    def test_markdown_content_preserved(self):
+        """Verify markdown formatting is stored correctly."""
+        # Arrange: Prepare complex markdown content
+        markdown_content = """# Main Header
+
+## Subheader with **bold** and *italic*
+
+### Lists
+- Item 1
+- Item 2
+  - Nested item
+  - Another nested item
+
+### Numbered List
+1. First
+2. Second
+3. Third
+
+### Links and Code
+[InvenTree](https://inventree.org)
+
+```python
+def example():
+    return "code block"
+```
+
+> Blockquote text
+
+---
+
+**Special characters:** & < > " ' `test`
+
+Newline preservation:
+Line 1
+Line 2
+Line 3"""
+
+        # Act: Create StockLocation with markdown notes
+        location = StockLocation.objects.create(
+            name='Test Markdown Location',
+            notes=markdown_content
+        )
+
+        # Assert: Markdown content is stored exactly as provided
+        self.assertEqual(location.notes, markdown_content)
+
+        # Verify newline characters are preserved
+        self.assertIn('\n', location.notes)
+        self.assertIn('# Main Header', location.notes)
+        self.assertIn('```python', location.notes)
+
+        # Verify special markdown characters are not escaped
+        self.assertIn('**bold**', location.notes)
+        self.assertIn('*italic*', location.notes)
+        self.assertIn('[InvenTree]', location.notes)
+
+        # Verify content persists correctly
+        location.refresh_from_db()
+        self.assertEqual(location.notes, markdown_content)
+
+    def test_notes_max_length(self):
+        """Verify notes field respects max_length constraint (50000 chars)."""
+        # Arrange: Prepare notes content at boundary
+        location = StockLocation.objects.create(name='Test Max Length Location')
+
+        # Test content at exactly 50000 chars (should be accepted)
+        notes_50000 = 'a' * 50000
+        location.notes = notes_50000
+        location.save()
+        location.full_clean()  # Should not raise ValidationError
+        self.assertEqual(len(location.notes), 50000)
+
+        # Test content at 49999 chars (should be accepted)
+        notes_49999 = 'b' * 49999
+        location.notes = notes_49999
+        location.save()
+        location.full_clean()  # Should not raise ValidationError
+        self.assertEqual(len(location.notes), 49999)
+
+        # Test content at 50001 chars (should raise ValidationError)
+        notes_50001 = 'c' * 50001
+        location.notes = notes_50001
+
+        with self.assertRaises(ValidationError) as context:
+            location.full_clean()
+
+        # Verify error message indicates max_length constraint
+        self.assertIn('50000', str(context.exception))
+
+    def test_notes_field_attributes(self):
+        """Verify notes field has correct attributes."""
+        # Arrange: Get StockLocation model field metadata
+        from InvenTree.fields import InvenTreeNotesField
+
+        notes_field = StockLocation._meta.get_field('notes')
+
+        # Assert: Field is instance of InvenTreeNotesField
+        self.assertIsInstance(notes_field, InvenTreeNotesField)
+
+        # Assert: Field attributes are correct
+        self.assertTrue(notes_field.null)
+        self.assertTrue(notes_field.blank)
+        self.assertEqual(notes_field.max_length, 50000)
+        self.assertEqual(notes_field.verbose_name, 'Notes')
+        self.assertEqual(notes_field.help_text, 'Markdown notes (optional)')
+
+
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""
 

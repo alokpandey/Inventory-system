@@ -417,3 +417,87 @@ class TestStockItemTrackingMigration(MigratorTestCase):
         )
         self.assertIn('salesorder', item.deltas)
         self.assertEqual(item.deltas['salesorder'], 1)
+
+
+class TestStockLocationNotesMigration(MigratorTestCase):
+    """Unit tests for StockLocation notes field migration."""
+
+    migrate_from = ('stock', '0116_alter_stockitem_link')
+    migrate_to = ('stock', '0117_stocklocation_notes')
+
+    def prepare(self):
+        """Create initial data before migration."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Create test StockLocations without notes field
+        StockLocation.objects.create(
+            name='Warehouse A',
+            description='Main warehouse',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0
+        )
+
+        loc_parent = StockLocation.objects.create(
+            name='Storage Room',
+            description='Temperature controlled',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=1
+        )
+
+        StockLocation.objects.create(
+            name='Shelf 1',
+            description='Top shelf',
+            parent=loc_parent,
+            level=1,
+            lft=0,
+            rght=0,
+            tree_id=1
+        )
+
+        # Verify initial record counts
+        self.assertEqual(StockLocation.objects.count(), 3)
+
+    def test_migration_adds_notes_field(self):
+        """Verify migration 0117 successfully adds notes field to StockLocation."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Verify locations exist
+        self.assertEqual(StockLocation.objects.count(), 3)
+
+        # Verify notes field exists after migration
+        warehouse = StockLocation.objects.get(name='Warehouse A')
+        storage = StockLocation.objects.get(name='Storage Room')
+        shelf = StockLocation.objects.get(name='Shelf 1')
+
+        # All existing locations should have notes=None after migration
+        self.assertIsNone(warehouse.notes)
+        self.assertIsNone(storage.notes)
+        self.assertIsNone(shelf.notes)
+
+        # Verify we can set notes on existing locations
+        warehouse.notes = 'Main warehouse - requires forklift access'
+        warehouse.save()
+        warehouse.refresh_from_db()
+        self.assertEqual(warehouse.notes, 'Main warehouse - requires forklift access')
+
+        # Verify we can create new locations with notes
+        new_location = StockLocation.objects.create(
+            name='Quarantine Area',
+            description='Quarantine storage',
+            notes='**Restricted access** - Quality team only',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=2
+        )
+        self.assertEqual(new_location.notes, '**Restricted access** - Quality team only')
+
+        # Verify field attributes
+        notes_field = StockLocation._meta.get_field('notes')
+        self.assertTrue(notes_field.null)
+        self.assertTrue(notes_field.blank)
+        self.assertEqual(notes_field.max_length, 50000)
