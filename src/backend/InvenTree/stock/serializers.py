@@ -1131,6 +1131,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class LocationSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
+    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Detailed information about a stock location."""
@@ -1159,6 +1160,7 @@ class LocationSerializer(
             'external',
             'location_type',
             'location_type_detail',
+            'notes',
             'tags',
         ]
         read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']

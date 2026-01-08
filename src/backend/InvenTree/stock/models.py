@@ -40,7 +40,11 @@ from common.settings import get_global_setting
 from company import models as CompanyModels
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
-from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.fields import (
+    InvenTreeModelMoneyField,
+    InvenTreeNotesField,
+    InvenTreeURLField,
+)
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -234,6 +238,10 @@ class StockLocation(
         null=True,
         blank=True,
         help_text=_('Stock location type of this location'),
+    )
+
+    notes = InvenTreeNotesField(
+        help_text=_('Markdown notes (optional)')
     )
 
     @property
