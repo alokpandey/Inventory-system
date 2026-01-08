@@ -417,3 +417,84 @@ class TestStockItemTrackingMigration(MigratorTestCase):
         )
         self.assertIn('salesorder', item.deltas)
         self.assertEqual(item.deltas['salesorder'], 1)
+
+
+class TestStockLocationNotesMigration(MigratorTestCase):
+    """Unit tests for StockLocation notes field migration."""
+
+    migrate_from = ('stock', '0116_alter_stockitem_link')
+    migrate_to = ('stock', '0117_stocklocation_notes')
+
+    def prepare(self):
+        """Create initial data."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Create test StockLocation instances without notes field
+        StockLocation.objects.create(
+            name='Test Location 1',
+            description='First test location',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0,
+        )
+        StockLocation.objects.create(
+            name='Test Location 2',
+            description='Second test location',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0,
+        )
+        StockLocation.objects.create(
+            name='Test Location 3',
+            description='Third test location',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0,
+        )
+
+        # Check initial record counts
+        self.assertEqual(StockLocation.objects.count(), 3)
+
+    def test_notes_field_added(self):
+        """Test that the notes field is added to StockLocation model after migration."""
+        StockLocation = self.old_state.apps.get_model('stock', 'stocklocation')
+
+        # Verify we have the expected number of locations
+        self.assertEqual(StockLocation.objects.count(), 3)
+
+        # Verify notes field exists and is None for existing locations
+        for location in StockLocation.objects.all():
+            # Field should exist and be accessible
+            self.assertIsNone(location.notes)
+
+        # Test that we can set and retrieve notes field value
+        location = StockLocation.objects.first()
+        location.notes = 'Test notes for migration'
+        location.save()
+
+        # Retrieve and verify
+        location.refresh_from_db()
+        self.assertEqual(location.notes, 'Test notes for migration')
+
+        # Test with empty string
+        location.notes = ''
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, '')
+
+        # Test with None
+        location.notes = None
+        location.save()
+        location.refresh_from_db()
+        self.assertIsNone(location.notes)
+
+        # Test with long text (up to 50000 characters)
+        long_text = 'A' * 50000
+        location.notes = long_text
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, long_text)
+        self.assertEqual(len(location.notes), 50000)

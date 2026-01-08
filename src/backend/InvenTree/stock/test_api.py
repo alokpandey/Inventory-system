@@ -470,6 +470,108 @@ class StockLocationTest(StockAPITestCase):
             self.assertEqual(item['parent'], parent)
             self.assertEqual(item['sublocations'], sublocations)
 
+    def test_notes_field_in_detail_view(self):
+        """Verify notes field is present in DETAIL API endpoint."""
+        # Create a StockLocation with notes
+        location = StockLocation.objects.create(
+            name='Location with Notes',
+            description='Test location with notes field',
+            notes='These are detailed notes about this location.\n\n**Important:** Handle with care.',
+        )
+
+        # GET request to detail endpoint
+        url = reverse('api-location-detail', kwargs={'pk': location.pk})
+        response = self.get(url, expected_code=200)
+
+        # Response should contain 'notes' field
+        self.assertIn('notes', response.data)
+        # Notes value should match what was set
+        self.assertEqual(
+            response.data['notes'],
+            'These are detailed notes about this location.\n\n**Important:** Handle with care.',
+        )
+
+    def test_notes_field_not_in_list_view(self):
+        """Verify notes field is NOT present in LIST API endpoint."""
+        # Create a StockLocation with notes
+        StockLocation.objects.create(
+            name='Location with Notes for List',
+            description='Test location for list view',
+            notes='These notes should not appear in list view',
+        )
+
+        # GET request to list endpoint
+        response = self.get(self.list_url, expected_code=200)
+
+        # Response should NOT contain 'notes' field (hidden by NotesFieldMixin)
+        for item in response.data:
+            self.assertNotIn('notes', item)
+
+    def test_notes_field_create_and_update(self):
+        """Verify notes field can be created and updated via API."""
+        # POST request to create location with notes
+        create_data = {
+            'name': 'New Location with Notes',
+            'description': 'Created via API',
+            'notes': 'Initial notes for this location',
+        }
+        response = self.post(self.list_url, create_data, expected_code=201)
+
+        # Verify location was created with notes
+        location_pk = response.data['pk']
+        self.assertEqual(response.data['notes'], 'Initial notes for this location')
+
+        # PATCH request to update notes
+        url = reverse('api-location-detail', kwargs={'pk': location_pk})
+        update_data = {'notes': 'Updated notes with **markdown** formatting'}
+        response = self.patch(url, update_data, expected_code=200)
+
+        # Verify notes were updated
+        self.assertEqual(
+            response.data['notes'], 'Updated notes with **markdown** formatting'
+        )
+
+        # GET request to verify changes persisted
+        response = self.get(url, expected_code=200)
+        self.assertEqual(
+            response.data['notes'], 'Updated notes with **markdown** formatting'
+        )
+
+        # Test clearing notes (set to empty string)
+        update_data = {'notes': ''}
+        response = self.patch(url, update_data, expected_code=200)
+        self.assertEqual(response.data['notes'], '')
+
+        # Test setting notes to None
+        update_data = {'notes': None}
+        response = self.patch(url, update_data, expected_code=200)
+        self.assertIsNone(response.data['notes'])
+
+    def test_notes_field_max_length_validation(self):
+        """Verify API validates notes max_length."""
+        # Create a location first
+        location = StockLocation.objects.create(
+            name='Location for Max Length Test', description='Test max length validation'
+        )
+
+        # PATCH request with notes exceeding 50000 characters
+        url = reverse('api-location-detail', kwargs={'pk': location.pk})
+        too_long_notes = 'A' * 50001
+        update_data = {'notes': too_long_notes}
+        response = self.patch(url, update_data, expected_code=400)
+
+        # Response should indicate validation error
+        self.assertIn('notes', response.data)
+        # Error message should mention max_length constraint
+        error_message = str(response.data['notes'][0])
+        self.assertIn('50000', error_message)
+
+        # Verify that exactly 50000 characters is accepted
+        max_length_notes = 'B' * 50000
+        update_data = {'notes': max_length_notes}
+        response = self.patch(url, update_data, expected_code=200)
+        self.assertEqual(response.data['notes'], max_length_notes)
+
 
 class StockLocationTypeTest(StockAPITestCase):
     """Tests for the StockLocationType API endpoints."""

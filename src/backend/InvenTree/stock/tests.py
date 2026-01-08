@@ -1565,6 +1565,92 @@ class StockLocationTest(InvenTreeTestCase):
         self.assertEqual(loc.icon, '')
 
 
+class StockLocationNotesTest(StockTestBase):
+    """Unit tests for StockLocation notes field."""
+
+    def test_notes_field_properties(self):
+        """Verify notes field has correct properties."""
+        # Create a new StockLocation instance
+        location = StockLocation.objects.create(
+            name='Test Location with Notes', description='Test location for notes field'
+        )
+
+        # Default value should be None
+        self.assertIsNone(location.notes)
+
+        # Set notes to various values and verify
+        location.notes = 'Simple note'
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, 'Simple note')
+
+        # Test with empty string
+        location.notes = ''
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, '')
+
+        # Test with None
+        location.notes = None
+        location.save()
+        location.refresh_from_db()
+        self.assertIsNone(location.notes)
+
+        # Test with markdown text
+        markdown_text = '# Header\n\n* Item 1\n* Item 2\n\n**Bold text**'
+        location.notes = markdown_text
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, markdown_text)
+
+        # Test with long text (up to 50000 characters)
+        long_text = 'A' * 50000
+        location.notes = long_text
+        location.save()
+        location.refresh_from_db()
+        self.assertEqual(location.notes, long_text)
+        self.assertEqual(len(location.notes), 50000)
+
+    def test_notes_field_max_length(self):
+        """Verify notes field respects max_length constraint."""
+        # Create a new StockLocation instance
+        location = StockLocation.objects.create(
+            name='Test Location Max Length', description='Test max length constraint'
+        )
+
+        # Attempt to set notes to text exceeding 50000 characters
+        too_long_text = 'A' * 50001
+        location.notes = too_long_text
+
+        # Call full_clean() to trigger validation
+        with self.assertRaises(ValidationError) as context:
+            location.full_clean()
+
+        # Verify ValidationError is raised for notes field
+        self.assertIn('notes', context.exception.message_dict)
+        # Verify error message mentions max_length
+        error_message = str(context.exception.message_dict['notes'][0])
+        self.assertIn('50000', error_message)
+
+    def test_notes_field_optional(self):
+        """Verify notes field is optional."""
+        # Create StockLocation without notes field
+        location = StockLocation.objects.create(
+            name='Test Location No Notes', description='Location without notes'
+        )
+
+        # Location should be created successfully
+        self.assertIsNotNone(location.pk)
+
+        # Notes field should be None
+        self.assertIsNone(location.notes)
+
+        # Verify location can be saved and retrieved
+        location.save()
+        location.refresh_from_db()
+        self.assertIsNone(location.notes)
+
+
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""
 
