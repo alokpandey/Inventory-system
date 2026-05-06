@@ -47,6 +47,9 @@ export const CategoryDetail = Loadable(
 export const PartDetail = Loadable(
   lazy(() => import('./pages/part/PartDetail'))
 );
+export const PartFavorites = Loadable(
+  lazy(() => import('./pages/part/PartFavorites'))
+);
 
 export const LocationDetail = Loadable(
   lazy(() => import('./pages/stock/LocationDetail'))
@@ -162,6 +165,7 @@ export const routes = (
       </Route>
       <Route path='part/'>
         <Route index element={<Navigate to='category/index/' />} />
+        <Route path='favorites/' element={<PartFavorites />} />
         <Route path='category/:id?/*' element={<CategoryDetail />} />
         <Route path=':id/*' element={<PartDetail />} />
       </Route>
