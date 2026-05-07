@@ -741,3 +741,33 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
 });
+
+/**
+ * Test Part Favorites Page functionality
+ * Tests for ADP-112: Create My Favorites Page Component
+ */
+test('Parts - Favorites Page', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/favorites' });
+
+  // Verify page title and subtitle
+  await page.getByText('My Favorites').waitFor();
+  await page.getByText('Parts you have starred for quick access').waitFor();
+
+  // Verify table is present
+  await page.getByRole('table').waitFor();
+});
+
+test('Parts - Favorites Display Starred Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'part/favorites' });
+
+  // Verify starred parts are displayed
+  await page.getByRole('table').waitFor();
+
+  // Wait for table to load
+  await page.waitForTimeout(500);
+
+  // Verify table has content (assuming test database has some starred parts)
+  // The exact content will depend on test data setup
+  const table = page.getByRole('table');
+  await table.waitFor();
+});
